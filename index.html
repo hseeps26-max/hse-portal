@@ -171,7 +171,7 @@
             </div>
             <div class="field">
               <label>Công ty <span class="req">*</span></label>
-              <input type="text" id="congTy" required>
+              <input type="text" id="congTy" required value="EPS">
             </div>
           </div>
           <div class="field">
@@ -199,7 +199,7 @@
                 <b>Chụp / chọn ảnh</b>
                 <div class="file-txt" id="txt-anh">Chưa có ảnh</div>
               </div>
-              <input type="file" accept="image/*" capture="environment" id="file-anh">
+              <input type="file" accept="image/*" id="file-anh">
             </div>
           </div>
           <div class="field">
@@ -210,7 +210,7 @@
                 <b>Chụp / chọn ảnh</b>
                 <div class="file-txt" id="txt-cccdTruoc">Chưa có ảnh</div>
               </div>
-              <input type="file" accept="image/*" capture="environment" id="file-cccdTruoc">
+              <input type="file" accept="image/*" id="file-cccdTruoc">
             </div>
           </div>
           <div class="field">
@@ -221,7 +221,7 @@
                 <b>Chụp / chọn ảnh</b>
                 <div class="file-txt" id="txt-cccdSau">Chưa có ảnh</div>
               </div>
-              <input type="file" accept="image/*" capture="environment" id="file-cccdSau">
+              <input type="file" accept="image/*" id="file-cccdSau">
             </div>
           </div>
           <div class="field">
@@ -232,7 +232,7 @@
                 <b>Chụp / chọn ảnh</b>
                 <div class="file-txt" id="txt-the">Chưa có ảnh</div>
               </div>
-              <input type="file" accept="image/*" capture="environment" id="file-the">
+              <input type="file" accept="image/*" id="file-the">
             </div>
           </div>
           <div class="field">
@@ -243,7 +243,7 @@
                 <b>Chụp / chọn ảnh</b>
                 <div class="file-txt" id="txt-cc">Chưa có ảnh</div>
               </div>
-              <input type="file" accept="image/*" capture="environment" id="file-cc">
+              <input type="file" accept="image/*" id="file-cc">
             </div>
           </div>
           <p class="hint">Ảnh sẽ được tự động nén để gửi nhanh hơn qua WIFI/5G. Vui lòng chụp rõ nét, đủ 4 góc đối với ảnh CCCD.</p>
@@ -494,7 +494,7 @@ function renderPreview(rows){
     html += '<tr><td>'+(i+1)+'</td>' + cols.map(c=>'<td>'+(r[c]||'')+'</td>').join('');
     PHOTO_FIELDS.forEach(field=>{
       html += '<td><label class="mini-file" id="mini-'+field+'-'+i+'">'+PHOTO_ICONS[field]+
-              '<input type="file" accept="image/*" capture="environment" class="rowFileInput" data-row="'+i+'" data-field="'+field+'"></label></td>';
+              '<input type="file" accept="image/*" class="rowFileInput" data-row="'+i+'" data-field="'+field+'"></label></td>';
     });
     html += '</tr>';
   });
