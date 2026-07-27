@@ -167,7 +167,11 @@
           <div class="grid2">
             <div class="field">
               <label>Đơn vị <span class="req">*</span></label>
-              <input type="text" id="donVi" required>
+              <select id="donVi" required>
+                <option value="" disabled selected>-- Đang tải danh sách... --</option>
+                <option value="__other__">+ Đơn vị khác (nhập mới)...</option>
+              </select>
+              <input type="text" id="donViOther" placeholder="Nhập tên đơn vị mới" style="display:none;margin-top:8px;">
             </div>
             <div class="field">
               <label>Công ty <span class="req">*</span></label>
@@ -318,6 +322,47 @@
 =========================================================*/
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxW_gLNNlT6f7b-VSD_WY2d1nS3hA5tpiwFXNqNys0rC9wOdzQlALxkOnuHaBm3hW1Sjw/exec";
 
+// ---------- Don vi: dropdown dong, lay tu Google Sheet 'DanhMucDonVi' ----------
+// Danh sach nay tu dong cap nhat: moi khi co ai dang ky voi 1 ten don vi moi
+// (go tay o o "+ Don vi khac"), backend se tu them ten do vao danh muc de
+// lan sau moi nguoi deu chon duoc trong dropdown - khong can chinh code hay sheet thu cong.
+const donViSelect = document.getElementById('donVi');
+const donViOtherInput = document.getElementById('donViOther');
+
+async function loadUnits(){
+  try{
+    const res = await fetch(APPS_SCRIPT_URL + '?action=units');
+    const data = await res.json();
+    const units = (data && data.ok && Array.isArray(data.units)) ? data.units : [];
+    const otherOpt = donViSelect.querySelector('option[value="__other__"]');
+    donViSelect.innerHTML = '';
+    const placeholder = document.createElement('option');
+    placeholder.value = ''; placeholder.disabled = true; placeholder.selected = true;
+    placeholder.textContent = units.length ? '-- Chọn đơn vị --' : '-- Chưa có đơn vị, chọn "Đơn vị khác" --';
+    donViSelect.appendChild(placeholder);
+    units.forEach(u=>{
+      const opt = document.createElement('option');
+      opt.value = u; opt.textContent = u;
+      donViSelect.appendChild(opt);
+    });
+    donViSelect.appendChild(otherOpt || Object.assign(document.createElement('option'), {value:'__other__', textContent:'+ Đơn vị khác (nhập mới)...'}));
+  }catch(err){
+    // Khong tai duoc danh sach (offline / chua deploy) -> cho nhap tay truc tiep
+    donViSelect.innerHTML = '<option value="__other__" selected>+ Nhập tên đơn vị...</option>';
+    donViSelect.dispatchEvent(new Event('change'));
+  }
+}
+donViSelect.addEventListener('change', ()=>{
+  const isOther = donViSelect.value === '__other__';
+  donViOtherInput.style.display = isOther ? 'block' : 'none';
+  if(isOther) donViOtherInput.focus();
+});
+loadUnits();
+
+function getDonViValue(){
+  return donViSelect.value === '__other__' ? donViOtherInput.value.trim() : donViSelect.value;
+}
+
 // ---------- Tabs ----------
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
@@ -437,8 +482,10 @@ singleForm.addEventListener('submit', async (e)=>{
   const fTheSau = document.getElementById('file-theSau').files[0];
   const fCC  = document.getElementById('file-cc').files[0];
   const isPT = document.getElementById('laoDongPhoThong').checked;
+  const donViVal = getDonViValue();
 
   const missingLabels = [];
+  if(!donViVal) missingLabels.push('Đơn vị');
   if(!fAnh) missingLabels.push('Ảnh chân dung');
   if(!fCccdTruoc) missingLabels.push('CCCD mặt trước');
   if(!fCccdSau) missingLabels.push('CCCD mặt sau');
@@ -470,7 +517,7 @@ singleForm.addEventListener('submit', async (e)=>{
       hoTen: document.getElementById('hoTen').value.trim(),
       ngaySinh: document.getElementById('ngaySinh').value,
       cccd: document.getElementById('cccd').value.trim(),
-      donVi: document.getElementById('donVi').value.trim(),
+      donVi: donViVal,
       congTy: document.getElementById('congTy').value.trim(),
       chucVu: document.getElementById('chucVu').value.trim(),
       dienThoai: document.getElementById('dienThoai').value.trim(),
@@ -493,8 +540,11 @@ singleForm.addEventListener('submit', async (e)=>{
 
     if(result.ok){
       showMsg(msgSingle,'ok','✅ Đã lưu hồ sơ thành công. Cảm ơn bạn!');
+      const wasNewUnit = donViSelect.value === '__other__';
       singleForm.reset();
       document.getElementById('ccEmail').value='';
+      donViOtherInput.value=''; donViOtherInput.style.display='none';
+      if(wasNewUnit) loadUnits(); else donViSelect.selectedIndex = 0;
       document.querySelectorAll('.file-row').forEach(r=>r.classList.remove('has-file'));
       const icons = {anh:'📷', cccdTruoc:'🪪', cccdSau:'🪪', theTruoc:'🦺', theSau:'🦺', cc:'📄'};
       Object.keys(icons).forEach(k=>{
