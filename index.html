@@ -160,8 +160,8 @@
               <input type="text" id="cccd" inputmode="numeric" required>
             </div>
             <div class="field">
-              <label>Điện thoại <span class="opt">(không bắt buộc)</span></label>
-              <input type="tel" id="dienThoai" inputmode="tel">
+              <label>Ngày tháng năm sinh <span class="req">*</span></label>
+              <input type="date" id="ngaySinh" required>
             </div>
           </div>
           <div class="grid2">
@@ -174,9 +174,19 @@
               <input type="text" id="congTy" required value="EPS">
             </div>
           </div>
-          <div class="field">
-            <label>Chức vụ <span class="opt">(không bắt buộc)</span></label>
-            <input type="text" id="chucVu">
+          <div class="grid2">
+            <div class="field">
+              <label>Chức vụ <span class="opt">(không bắt buộc)</span></label>
+              <input type="text" id="chucVu">
+            </div>
+            <div class="field">
+              <label>Điện thoại <span class="opt">(không bắt buộc)</span></label>
+              <input type="tel" id="dienThoai" inputmode="tel">
+            </div>
+          </div>
+          <div class="field" style="display:flex;align-items:center;gap:8px;margin-top:2px;">
+            <input type="checkbox" id="laoDongPhoThong" style="width:17px;height:17px;margin:0;">
+            <label for="laoDongPhoThong" style="margin:0;font-weight:600;">Là lao động phổ thông <span class="opt">(không yêu cầu Chứng chỉ)</span></label>
           </div>
         </fieldset>
 
@@ -190,7 +200,7 @@
         </fieldset>
 
         <fieldset>
-          <legend>Hồ sơ đính kèm (bắt buộc đủ 5 ảnh)</legend>
+          <legend>Hồ sơ đính kèm</legend>
           <div class="field">
             <label>Ảnh chân dung <span class="req">*</span></label>
             <div class="file-row" id="row-anh">
@@ -225,28 +235,40 @@
             </div>
           </div>
           <div class="field">
-            <label>Thẻ an toàn <span class="req">*</span></label>
-            <div class="file-row" id="row-the">
-              <div class="file-thumb" id="thumb-the">🦺</div>
+            <label>Thẻ an toàn mặt trước <span class="req">*</span></label>
+            <div class="file-row" id="row-theTruoc">
+              <div class="file-thumb" id="thumb-theTruoc">🦺</div>
               <div>
                 <b>Chụp / chọn ảnh</b>
-                <div class="file-txt" id="txt-the">Chưa có ảnh</div>
+                <div class="file-txt" id="txt-theTruoc">Chưa có ảnh</div>
               </div>
-              <input type="file" accept="image/*" id="file-the">
+              <input type="file" accept="image/*" id="file-theTruoc">
             </div>
           </div>
           <div class="field">
-            <label>Chứng chỉ <span class="req">*</span></label>
+            <label>Thẻ an toàn mặt sau <span class="req">*</span></label>
+            <div class="file-row" id="row-theSau">
+              <div class="file-thumb" id="thumb-theSau">🦺</div>
+              <div>
+                <b>Chụp / chọn ảnh</b>
+                <div class="file-txt" id="txt-theSau">Chưa có ảnh</div>
+              </div>
+              <input type="file" accept="image/*" id="file-theSau">
+            </div>
+          </div>
+          <div class="field" id="field-cc">
+            <label id="label-cc">Chứng chỉ <span class="req" id="cc-req">*</span></label>
             <div class="file-row" id="row-cc">
               <div class="file-thumb" id="thumb-cc">📄</div>
               <div>
-                <b>Chụp / chọn ảnh</b>
-                <div class="file-txt" id="txt-cc">Chưa có ảnh</div>
+                <b>Chọn ảnh hoặc file PDF</b>
+                <div class="file-txt" id="txt-cc">Chưa có file</div>
               </div>
-              <input type="file" accept="image/*" id="file-cc">
+              <input type="file" accept="image/*,application/pdf" id="file-cc">
             </div>
+            <p class="hint">Có thể chọn ảnh chụp hoặc file PDF chứng chỉ.</p>
           </div>
-          <p class="hint">Ảnh sẽ được tự động nén để gửi nhanh hơn qua WIFI/5G. Vui lòng chụp rõ nét, đủ 4 góc đối với ảnh CCCD.</p>
+          <p class="hint">Ảnh sẽ được tự động nén để gửi nhanh hơn qua WIFI/5G. Vui lòng chụp rõ nét, đủ 4 góc đối với ảnh CCCD và thẻ an toàn.</p>
         </fieldset>
 
         <button type="submit" class="btn btn-primary" id="btnSubmitSingle">Gửi hồ sơ</button>
@@ -267,21 +289,21 @@
 
       <div class="drop" id="dropZone">
         <b>Chọn file Excel (.xlsx)</b>
-        <span>Cột: Họ và tên | CCCD | Đơn vị | Công ty | Chức vụ | Điện thoại</span>
+        <span>Cột: Họ và tên | CCCD | Ngày sinh | Đơn vị | Công ty | Chức vụ | Điện thoại | Lao động phổ thông</span>
         <input type="file" accept=".xlsx,.xls" id="fileExcel">
       </div>
       <button type="button" class="btn btn-ghost" id="btnTemplate">Tải file mẫu Excel</button>
 
       <div id="previewArea" style="display:none;">
         <span class="count-chip" id="rowCount"></span>
-        <p class="photo-legend">📷 Ảnh chân dung &nbsp;·&nbsp; 🪪 CCCD trước &nbsp;·&nbsp; 🪪 CCCD sau &nbsp;·&nbsp; 🦺 Thẻ an toàn &nbsp;·&nbsp; 📄 Chứng chỉ — cả 5 ảnh đều <b>bắt buộc</b> cho mỗi người. Bấm vào từng ô để chọn/chụp ảnh (ô chuyển sang màu xanh khi đã đính kèm).</p>
+        <p class="photo-legend">📷 Ảnh chân dung &nbsp;·&nbsp; 🪪 CCCD trước &nbsp;·&nbsp; 🪪 CCCD sau &nbsp;·&nbsp; 🦺 Thẻ AT trước &nbsp;·&nbsp; 🦺 Thẻ AT sau &nbsp;·&nbsp; 📄 Chứng chỉ — <b>bắt buộc</b> 5 ảnh đầu cho mỗi người; Chứng chỉ (ảnh hoặc PDF) không bắt buộc nếu cột "Lao động phổ thông" = Có. Bấm vào từng ô để chọn file (ô chuyển sang màu xanh khi đã đính kèm).</p>
         <div class="preview-wrap">
           <table class="preview" id="previewTable"></table>
         </div>
         <button type="button" class="btn btn-primary" id="btnSubmitBulk" style="margin-top:14px;">Xác nhận &amp; gửi danh sách</button>
       </div>
       <div class="msg" id="msgBulk"></div>
-      <p class="hint" style="margin-top:10px;">Nhập danh sách từ Excel để tạo nhanh nhiều hồ sơ cùng lúc. Ảnh (chân dung, CCCD mặt trước/sau, thẻ an toàn, chứng chỉ) được đính kèm trực tiếp trong bảng xem trước bên dưới — không cần chỉnh sửa file Excel. Tất cả 5 ảnh của mỗi người đều bắt buộc trước khi gửi.</p>
+      <p class="hint" style="margin-top:10px;">Nhập danh sách từ Excel để tạo nhanh nhiều hồ sơ cùng lúc. Ảnh/file (chân dung, CCCD mặt trước/sau, thẻ an toàn mặt trước/sau, chứng chỉ) được đính kèm trực tiếp trong bảng xem trước bên dưới — không cần chỉnh sửa file Excel. Chứng chỉ nhận cả ảnh hoặc PDF, và không bắt buộc với lao động phổ thông (đánh dấu ở cột "Lao động phổ thông" trong file Excel).</p>
     </div>
 
     <footer>Cổng đăng ký Hồ sơ Học viên</footer>
@@ -312,8 +334,23 @@ function showMsg(el, type, html){
   el.innerHTML = html;
 }
 
-// Resize + compress image client-side before converting to base64
+// Chuyen file sang base64 nguyen ban, khong nen (dung cho PDF)
+function fileToRawBase64(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// Resize + compress image client-side before converting to base64.
+// Neu la file PDF thi giu nguyen, khong nen anh.
 function fileToCompressedBase64(file, maxDim=1280, quality=0.72){
+  if(!file) return Promise.resolve(null);
+  if(file.type === 'application/pdf'){
+    return fileToRawBase64(file);
+  }
   return new Promise((resolve, reject)=>{
     const img = new Image();
     const reader = new FileReader();
@@ -344,16 +381,43 @@ function wireFileRow(rowId, thumbId, txtId, inputId){
     if(!f) return;
     row.classList.add('has-file');
     txt.innerHTML = '<b>'+f.name+'</b>' + (f.size/1024/1024).toFixed(1)+' MB';
-    const reader = new FileReader();
-    reader.onload = e => { thumb.innerHTML = '<img src="'+e.target.result+'">'; };
-    reader.readAsDataURL(f);
+    if(f.type === 'application/pdf'){
+      thumb.innerHTML = '📄';
+    } else {
+      const reader = new FileReader();
+      reader.onload = e => { thumb.innerHTML = '<img src="'+e.target.result+'">'; };
+      reader.readAsDataURL(f);
+    }
   });
 }
 wireFileRow('row-anh','thumb-anh','txt-anh','file-anh');
 wireFileRow('row-cccdTruoc','thumb-cccdTruoc','txt-cccdTruoc','file-cccdTruoc');
 wireFileRow('row-cccdSau','thumb-cccdSau','txt-cccdSau','file-cccdSau');
-wireFileRow('row-the','thumb-the','txt-the','file-the');
+wireFileRow('row-theTruoc','thumb-theTruoc','txt-theTruoc','file-theTruoc');
+wireFileRow('row-theSau','thumb-theSau','txt-theSau','file-theSau');
 wireFileRow('row-cc','thumb-cc','txt-cc','file-cc');
+
+// ---------- Toggle "Lao dong pho thong" -> Chung chi khong bat buoc ----------
+const cbLaoDongPhoThong = document.getElementById('laoDongPhoThong');
+const ccReqSpan = document.getElementById('cc-req');
+const fieldCC = document.getElementById('field-cc');
+function refreshChungChiRequirement(){
+  const isPT = cbLaoDongPhoThong.checked;
+  if(ccReqSpan) ccReqSpan.style.display = isPT ? 'none' : 'inline';
+  let optSpan = fieldCC.querySelector('.opt-cc');
+  if(isPT){
+    if(!optSpan){
+      optSpan = document.createElement('span');
+      optSpan.className = 'opt opt-cc';
+      optSpan.textContent = ' (không bắt buộc - lao động phổ thông)';
+      document.getElementById('label-cc').appendChild(optSpan);
+    }
+  } else if(optSpan){
+    optSpan.remove();
+  }
+}
+cbLaoDongPhoThong.addEventListener('change', refreshChungChiRequirement);
+refreshChungChiRequirement();
 
 // ---------- Single submit ----------
 const singleForm = document.getElementById('singleForm');
@@ -369,17 +433,21 @@ singleForm.addEventListener('submit', async (e)=>{
   const fAnh = document.getElementById('file-anh').files[0];
   const fCccdTruoc = document.getElementById('file-cccdTruoc').files[0];
   const fCccdSau = document.getElementById('file-cccdSau').files[0];
-  const fThe = document.getElementById('file-the').files[0];
+  const fTheTruoc = document.getElementById('file-theTruoc').files[0];
+  const fTheSau = document.getElementById('file-theSau').files[0];
   const fCC  = document.getElementById('file-cc').files[0];
+  const isPT = document.getElementById('laoDongPhoThong').checked;
 
   const missingLabels = [];
   if(!fAnh) missingLabels.push('Ảnh chân dung');
   if(!fCccdTruoc) missingLabels.push('CCCD mặt trước');
   if(!fCccdSau) missingLabels.push('CCCD mặt sau');
-  if(!fThe) missingLabels.push('Thẻ an toàn');
-  if(!fCC) missingLabels.push('Chứng chỉ');
+  if(!fTheTruoc) missingLabels.push('Thẻ an toàn mặt trước');
+  if(!fTheSau) missingLabels.push('Thẻ an toàn mặt sau');
+  if(!isPT && !fCC) missingLabels.push('Chứng chỉ');
+  if(!document.getElementById('ngaySinh').value) missingLabels.push('Ngày tháng năm sinh');
   if(missingLabels.length){
-    showMsg(msgSingle,'err','Vui lòng bổ sung đủ ảnh bắt buộc: '+missingLabels.join(', ')+'.');
+    showMsg(msgSingle,'err','Vui lòng bổ sung đủ thông tin/ảnh bắt buộc: '+missingLabels.join(', ')+'.');
     return;
   }
 
@@ -388,28 +456,32 @@ singleForm.addEventListener('submit', async (e)=>{
   showMsg(msgSingle,'wait','Đang xử lý ảnh và gửi hồ sơ, vui lòng đợi (có thể mất 10-30 giây trên mạng di động)...');
 
   try{
-    const [anhB64, cccdTruocB64, cccdSauB64, theB64, ccB64] = await Promise.all([
+    const [anhB64, cccdTruocB64, cccdSauB64, theTruocB64, theSauB64, ccB64] = await Promise.all([
       fileToCompressedBase64(fAnh),
       fileToCompressedBase64(fCccdTruoc),
       fileToCompressedBase64(fCccdSau),
-      fileToCompressedBase64(fThe),
+      fileToCompressedBase64(fTheTruoc),
+      fileToCompressedBase64(fTheSau),
       fileToCompressedBase64(fCC)
     ]);
 
     const payload = {
       type: 'single',
       hoTen: document.getElementById('hoTen').value.trim(),
+      ngaySinh: document.getElementById('ngaySinh').value,
       cccd: document.getElementById('cccd').value.trim(),
       donVi: document.getElementById('donVi').value.trim(),
       congTy: document.getElementById('congTy').value.trim(),
       chucVu: document.getElementById('chucVu').value.trim(),
       dienThoai: document.getElementById('dienThoai').value.trim(),
+      laoDongPhoThong: isPT,
       ccEmail: document.getElementById('ccEmail').value.trim(),
       anh: {name: fAnh.name, data: anhB64},
       cccdMatTruoc: {name: fCccdTruoc.name, data: cccdTruocB64},
       cccdMatSau: {name: fCccdSau.name, data: cccdSauB64},
-      the: {name: fThe.name, data: theB64},
-      chungChi: {name: fCC.name, data: ccB64}
+      theTruoc: {name: fTheTruoc.name, data: theTruocB64},
+      theSau: {name: fTheSau.name, data: theSauB64},
+      chungChi: fCC ? {name: fCC.name, data: ccB64} : null
     };
 
     const res = await fetch(APPS_SCRIPT_URL, {
@@ -424,11 +496,12 @@ singleForm.addEventListener('submit', async (e)=>{
       singleForm.reset();
       document.getElementById('ccEmail').value='';
       document.querySelectorAll('.file-row').forEach(r=>r.classList.remove('has-file'));
-      const icons = {anh:'📷', cccdTruoc:'🪪', cccdSau:'🪪', the:'🦺', cc:'📄'};
+      const icons = {anh:'📷', cccdTruoc:'🪪', cccdSau:'🪪', theTruoc:'🦺', theSau:'🦺', cc:'📄'};
       Object.keys(icons).forEach(k=>{
         document.getElementById('thumb-'+k).innerHTML = icons[k];
         document.getElementById('txt-'+k).textContent = 'Chưa có ảnh';
       });
+      refreshChungChiRequirement();
     } else {
       showMsg(msgSingle,'err','❌ Gửi thất bại: '+(result.error||'Lỗi không xác định.'));
     }
@@ -441,18 +514,24 @@ singleForm.addEventListener('submit', async (e)=>{
 });
 
 // ---------- Bulk / Excel ----------
-const REQUIRED_COLS = ['Họ và tên','CCCD','Đơn vị','Công ty'];
-const OPTIONAL_COLS = ['Chức vụ','Điện thoại'];
-const PHOTO_FIELDS = ['anh','cccdTruoc','cccdSau','the','cc'];
-const PHOTO_ICONS = {anh:'📷', cccdTruoc:'🪪', cccdSau:'🪪', the:'🦺', cc:'📄'};
-const PHOTO_LABELS = {anh:'Ảnh chân dung', cccdTruoc:'CCCD mặt trước', cccdSau:'CCCD mặt sau', the:'Thẻ an toàn', cc:'Chứng chỉ'};
+const REQUIRED_COLS = ['Họ và tên','CCCD','Ngày sinh','Đơn vị','Công ty'];
+const OPTIONAL_COLS = ['Chức vụ','Điện thoại','Lao động phổ thông'];
+const PHOTO_FIELDS = ['anh','cccdTruoc','cccdSau','theTruoc','theSau','cc'];
+const PHOTO_ICONS = {anh:'📷', cccdTruoc:'🪪', cccdSau:'🪪', theTruoc:'🦺', theSau:'🦺', cc:'📄'};
+const PHOTO_LABELS = {anh:'Ảnh chân dung', cccdTruoc:'CCCD mặt trước', cccdSau:'CCCD mặt sau', theTruoc:'Thẻ an toàn mặt trước', theSau:'Thẻ an toàn mặt sau', cc:'Chứng chỉ'};
 let parsedRows = [];
-let rowFiles = []; // parallel array to parsedRows: {anh, cccdTruoc, cccdSau, the, cc: File|null}
+let rowFiles = []; // parallel array to parsedRows: {anh, cccdTruoc, cccdSau, theTruoc, theSau, cc: File|null}
+
+// Xac dinh 1 dong Excel co phai "Lao dong pho thong" hay khong (Co/co/x/yes/1/true...)
+function isPhoThong(rowVal){
+  const v = (rowVal===undefined||rowVal===null) ? '' : String(rowVal).trim().toLowerCase();
+  return ['co','x','yes','y','1','true','có'].includes(v);
+}
 
 document.getElementById('btnTemplate').addEventListener('click', ()=>{
   const wb = XLSX.utils.book_new();
   const headers = [...REQUIRED_COLS, ...OPTIONAL_COLS];
-  const ws = XLSX.utils.aoa_to_sheet([headers, ['Nguyễn Văn A','012345678901','SD','SD','Công nhân','0900000000']]);
+  const ws = XLSX.utils.aoa_to_sheet([headers, ['Nguyễn Văn A','012345678901','1995-05-20','SD','SD','Công nhân','0900000000','Có']]);
   XLSX.utils.book_append_sheet(wb, ws, 'Mau');
   XLSX.writeFile(wb, 'Mau_danh_sach_hoc_vien.xlsx');
 });
@@ -485,16 +564,18 @@ document.getElementById('fileExcel').addEventListener('change', (e)=>{
 });
 
 function renderPreview(rows){
-  rowFiles = rows.map(()=>({anh:null, cccdTruoc:null, cccdSau:null, the:null, cc:null}));
+  rowFiles = rows.map(()=>({anh:null, cccdTruoc:null, cccdSau:null, theTruoc:null, theSau:null, cc:null}));
   const table = document.getElementById('previewTable');
   const cols = [...REQUIRED_COLS, ...OPTIONAL_COLS];
   let html = '<tr><th>#</th>'+cols.map(c=>'<th>'+c+'</th>').join('')+
              PHOTO_FIELDS.map(f=>'<th>'+PHOTO_ICONS[f]+'</th>').join('')+'</tr>';
   rows.slice(0,200).forEach((r,i)=>{
+    const phoThong = isPhoThong(r['Lao động phổ thông']);
     html += '<tr><td>'+(i+1)+'</td>' + cols.map(c=>'<td>'+(r[c]||'')+'</td>').join('');
     PHOTO_FIELDS.forEach(field=>{
-      html += '<td><label class="mini-file" id="mini-'+field+'-'+i+'">'+PHOTO_ICONS[field]+
-              '<input type="file" accept="image/*" class="rowFileInput" data-row="'+i+'" data-field="'+field+'"></label></td>';
+      const optional = (field === 'cc' && phoThong);
+      html += '<td><label class="mini-file" id="mini-'+field+'-'+i+'" style="'+(optional?'opacity:.45;border-style:dotted;':'')+'" title="'+(optional?'Không bắt buộc (lao động phổ thông)':'')+'">'+PHOTO_ICONS[field]+
+              '<input type="file" accept="'+(field==='cc'?'image/*,application/pdf':'image/*')+'" class="rowFileInput" data-row="'+i+'" data-field="'+field+'"></label></td>';
     });
     html += '</tr>';
   });
@@ -517,7 +598,10 @@ function findMissingPhotoRows(){
   const problems = [];
   parsedRows.forEach((r, i)=>{
     const rf = rowFiles[i] || {};
-    const missingHere = PHOTO_FIELDS.filter(f=>!rf[f]).map(f=>PHOTO_LABELS[f]);
+    const phoThong = isPhoThong(r['Lao động phổ thông']);
+    const requiredFields = PHOTO_FIELDS.filter(f => !(f === 'cc' && phoThong));
+    const missingHere = requiredFields.filter(f=>!rf[f]).map(f=>PHOTO_LABELS[f]);
+    if(!r['Ngày sinh']) missingHere.push('Ngày sinh');
     if(missingHere.length){
       problems.push('Dòng '+(i+1)+' ('+(r['Họ và tên']||'?')+'): thiếu '+missingHere.join(', '));
     }
@@ -549,21 +633,25 @@ document.getElementById('btnSubmitBulk').addEventListener('click', async ()=>{
   try{
     const rowsPayload = await Promise.all(parsedRows.map(async (r, i)=>{
       const rf = rowFiles[i] || {};
-      const [anhB64, cccdTruocB64, cccdSauB64, theB64, ccB64] = await Promise.all([
+      const phoThong = isPhoThong(r['Lao động phổ thông']);
+      const [anhB64, cccdTruocB64, cccdSauB64, theTruocB64, theSauB64, ccB64] = await Promise.all([
         fileToCompressedBase64(rf.anh),
         fileToCompressedBase64(rf.cccdTruoc),
         fileToCompressedBase64(rf.cccdSau),
-        fileToCompressedBase64(rf.the),
+        fileToCompressedBase64(rf.theTruoc),
+        fileToCompressedBase64(rf.theSau),
         fileToCompressedBase64(rf.cc)
       ]);
       return {
-        hoTen: r['Họ và tên']||'', cccd:r['CCCD']||'', donVi:r['Đơn vị']||'',
+        hoTen: r['Họ và tên']||'', ngaySinh: r['Ngày sinh']||'', cccd:r['CCCD']||'', donVi:r['Đơn vị']||'',
         congTy:r['Công ty']||'', chucVu:r['Chức vụ']||'', dienThoai:r['Điện thoại']||'',
+        laoDongPhoThong: phoThong,
         anh: {name: rf.anh.name, data: anhB64},
         cccdMatTruoc: {name: rf.cccdTruoc.name, data: cccdTruocB64},
         cccdMatSau: {name: rf.cccdSau.name, data: cccdSauB64},
-        the: {name: rf.the.name, data: theB64},
-        chungChi: {name: rf.cc.name, data: ccB64}
+        theTruoc: {name: rf.theTruoc.name, data: theTruocB64},
+        theSau: {name: rf.theSau.name, data: theSauB64},
+        chungChi: rf.cc ? {name: rf.cc.name, data: ccB64} : null
       };
     }));
     const payload = { type:'bulk', rows: rowsPayload, ccEmail: document.getElementById('ccEmailBulk').value.trim() };
