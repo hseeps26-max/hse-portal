@@ -297,6 +297,7 @@
         <input type="file" accept=".xlsx,.xls" id="fileExcel">
       </div>
       <button type="button" class="btn btn-ghost" id="btnTemplate">Tải file mẫu Excel</button>
+      <p class="hint">File mẫu có sẵn dropdown chọn nhanh cho cột "Đơn vị" (theo danh mục nhà thầu đang có) và "Lao động phổ thông" (Có/Không).</p>
 
       <div id="previewArea" style="display:none;">
         <span class="count-chip" id="rowCount"></span>
@@ -320,7 +321,7 @@
    Dán URL Web App (Google Apps Script) sau khi triển khai Code.gs
    Xem hướng dẫn trong file HUONG_DAN_TRIEN_KHAI.md
 =========================================================*/
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzVX-7Au8qBRQ-eczAT8dwCwbRZLtUIyO-JkkLR00G71SPvpXgPGtYLC4aC7D7iCq-_bA/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYh1yAsLSPZgiCnjVgD6YK5H5YLb_voagwqMO_vk1FTDJfgYQmzS-99fnpY20MPC12jg/exec";
 
 // ---------- Don vi: dropdown dong, lay tu Google Sheet 'DanhMucDonVi' ----------
 // Danh sach nay tu dong cap nhat: moi khi co ai dang ky voi 1 ten don vi moi
@@ -578,12 +579,33 @@ function isPhoThong(rowVal){
   return ['co','x','yes','y','1','true','có'].includes(v);
 }
 
-document.getElementById('btnTemplate').addEventListener('click', ()=>{
-  const wb = XLSX.utils.book_new();
-  const headers = [...REQUIRED_COLS, ...OPTIONAL_COLS];
-  const ws = XLSX.utils.aoa_to_sheet([headers, ['Nguyễn Văn A','012345678901','1995-05-20','SD','SD','Công nhân','0900000000','Có']]);
-  XLSX.utils.book_append_sheet(wb, ws, 'Mau');
-  XLSX.writeFile(wb, 'Mau_danh_sach_hoc_vien.xlsx');
+document.getElementById('btnTemplate').addEventListener('click', async ()=>{
+  const btn = document.getElementById('btnTemplate');
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Đang tạo file mẫu (có dropdown)...';
+  try{
+    const res = await fetch(APPS_SCRIPT_URL + '?action=template');
+    const data = await res.json();
+    if(!data.ok) throw new Error(data.error || 'Không tạo được file mẫu.');
+    const byteChars = atob(data.base64);
+    const byteNumbers = new Array(byteChars.length);
+    for(let i=0;i<byteChars.length;i++) byteNumbers[i] = byteChars.charCodeAt(i);
+    const blob = new Blob([new Uint8Array(byteNumbers)], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = data.filename || 'Mau_danh_sach_hoc_vien.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }catch(err){
+    alert('Không tải được file mẫu: '+err.message+'\nVui lòng kiểm tra kết nối mạng và thử lại.');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = original;
+  }
 });
 
 document.getElementById('fileExcel').addEventListener('change', (e)=>{
