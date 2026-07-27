@@ -671,10 +671,10 @@ singleForm.addEventListener('submit', async (e)=>{
   const bodyHtml = '<table>'+summaryRows.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('')+'</table>'+
     '<div class="modal-note">Đã đính kèm đủ ảnh/file bắt buộc. Bằng việc bấm "Xác nhận & gửi", bạn xác nhận thông tin trên là chính xác và đồng ý cho phép thu thập, sử dụng dữ liệu cá nhân của mình theo Thông báo xử lý dữ liệu cá nhân đã đọc.</div>';
 
-  openConfirmModal('Xác nhận thông tin & gửi hồ sơ', bodyHtml, ()=> doSubmitSingle(fAnh, fCccdTruoc, fCccdSau, fTheTruoc, fTheSau, fCC, isPT, donViVal));
+  openConfirmModal('Xác nhận thông tin & gửi hồ sơ', bodyHtml, ()=> doSubmitSingle(fAnh, fCccdTruoc, fCccdSau, fTheTruoc, fTheSau, fCC, isPT, donViVal, ngaySinhVal, cccdVal));
 });
 
-async function doSubmitSingle(fAnh, fCccdTruoc, fCccdSau, fTheTruoc, fTheSau, fCC, isPT, donViVal){
+async function doSubmitSingle(fAnh, fCccdTruoc, fCccdSau, fTheTruoc, fTheSau, fCC, isPT, donViVal, ngaySinhVal, cccdVal){
   btnSubmitSingle.disabled = true;
   btnSubmitSingle.innerHTML = '<span class="spin"></span> Đang nén & gửi hồ sơ...';
   showMsg(msgSingle,'wait','Đang xử lý ảnh và gửi hồ sơ, vui lòng đợi (có thể mất 10-30 giây trên mạng di động)...');
