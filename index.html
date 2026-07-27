@@ -293,11 +293,11 @@
 
       <div class="drop" id="dropZone">
         <b>Chọn file Excel (.xlsx)</b>
-        <span>Cột: Họ và tên | CCCD | Ngày sinh | Đơn vị | Công ty | Chức vụ | Điện thoại | Lao động phổ thông</span>
+        <span>Điền dữ liệu vào sheet "Mau" trong file mẫu (có sheet "Hướng dẫn" đi kèm). Ngày sinh: dd/mm/yyyy.</span>
         <input type="file" accept=".xlsx,.xls" id="fileExcel">
       </div>
       <button type="button" class="btn btn-ghost" id="btnTemplate">Tải file mẫu Excel</button>
-      <p class="hint">File mẫu có sẵn dropdown chọn nhanh cho cột "Đơn vị" (theo danh mục nhà thầu đang có) và "Lao động phổ thông" (Có/Không).</p>
+      <p class="hint">File mẫu gồm sheet "Hướng dẫn" giải thích cách điền, và sheet "Mau" có sẵn dropdown cho cột "Đơn vị" (theo danh mục nhà thầu đang có) và "Lao động phổ thông" (Có/Không), cột "Ngày sinh" định dạng dd/mm/yyyy.</p>
 
       <div id="previewArea" style="display:none;">
         <span class="count-chip" id="rowCount"></span>
@@ -615,14 +615,18 @@ document.getElementById('fileExcel').addEventListener('change', (e)=>{
   const reader = new FileReader();
   reader.onload = (evt)=>{
     try{
-      const wb = XLSX.read(evt.target.result, {type:'array'});
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(ws, {defval:''});
-      if(rows.length === 0){ showMsg(msgBulk,'err','File không có dữ liệu.'); return; }
+      const wb = XLSX.read(evt.target.result, {type:'array', cellDates:true});
+      // File mau co 2 tab: 'HuongDan' va 'Mau' (chua du lieu). Uu tien doc tab 'Mau' neu co,
+      // phong khi nguoi dung dung dung file mau; neu khong co thi doc tab dau tien nhu cu.
+      const sheetName = wb.SheetNames.includes('Mau') ? 'Mau' : wb.SheetNames[0];
+      const ws = wb.Sheets[sheetName];
+      // raw:false + dateNF de cac o ngay thang duoc xuat ra dung dang chuoi dd/mm/yyyy
+      const rows = XLSX.utils.sheet_to_json(ws, {defval:'', raw:false, dateNF:'dd/mm/yyyy'});
+      if(rows.length === 0){ showMsg(msgBulk,'err','File không có dữ liệu. Vui lòng điền vào sheet "Mau".'); return; }
       const cols = Object.keys(rows[0]);
       const missing = REQUIRED_COLS.filter(c=>!cols.includes(c));
       if(missing.length){
-        showMsg(msgBulk,'err','Thiếu cột bắt buộc: '+missing.join(', ')+'. Vui lòng dùng đúng file mẫu.');
+        showMsg(msgBulk,'err','Thiếu cột bắt buộc: '+missing.join(', ')+'. Vui lòng dùng đúng file mẫu (sheet "Mau").');
         return;
       }
       parsedRows = rows;
