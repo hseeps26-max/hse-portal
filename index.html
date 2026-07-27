@@ -192,12 +192,12 @@
           </div>
           <div class="grid2">
             <div class="field">
-              <label>Số CCCD <span class="req">*</span></label>
-              <input type="text" id="cccd" inputmode="numeric" required>
+              <label>Số CCCD / Hộ chiếu <span class="req">*</span></label>
+              <input type="text" id="cccd" maxlength="12" placeholder="12 số (CCCD) hoặc mã hộ chiếu" required>
             </div>
             <div class="field">
               <label>Ngày tháng năm sinh <span class="req">*</span></label>
-              <input type="date" id="ngaySinh" required>
+              <input type="text" id="ngaySinh" inputmode="numeric" placeholder="dd/mm/yyyy" maxlength="10" autocomplete="off" required>
             </div>
           </div>
           <div class="grid2">
@@ -563,6 +563,39 @@ wireFileRow('row-theTruoc','thumb-theTruoc','txt-theTruoc','file-theTruoc');
 wireFileRow('row-theSau','thumb-theSau','txt-theSau','file-theSau');
 wireFileRow('row-cc','thumb-cc','txt-cc','file-cc');
 
+// ---------- Ngay sinh: nhap dang text, tu dong them dau "/" theo dd/mm/yyyy ----------
+const ngaySinhInput = document.getElementById('ngaySinh');
+ngaySinhInput.addEventListener('input', ()=>{
+  let digits = ngaySinhInput.value.replace(/[^\d]/g,'').slice(0,8); // toi da 8 so: ddmmyyyy
+  let out = digits;
+  if(digits.length > 4) out = digits.slice(0,2)+'/'+digits.slice(2,4)+'/'+digits.slice(4);
+  else if(digits.length > 2) out = digits.slice(0,2)+'/'+digits.slice(2);
+  ngaySinhInput.value = out;
+});
+function isValidDDMMYYYY(str){
+  const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec((str||'').trim());
+  if(!m) return false;
+  const d = +m[1], mo = +m[2], y = +m[3];
+  if(mo < 1 || mo > 12) return false;
+  const daysInMonth = new Date(y, mo, 0).getDate();
+  if(d < 1 || d > daysInMonth) return false;
+  if(y < 1900 || y > new Date().getFullYear()) return false;
+  return true;
+}
+
+// ---------- CCCD/Ho chieu: CCCD = dung 12 so, Ho chieu = chu+so 6-12 ky tu ----------
+const cccdInput = document.getElementById('cccd');
+cccdInput.addEventListener('input', ()=>{
+  // Cho phep so (CCCD) hoac chu+so (ho chieu), tu dong viet hoa chu, gioi han 12 ky tu
+  cccdInput.value = cccdInput.value.replace(/[^0-9a-zA-Z]/g,'').toUpperCase().slice(0,12);
+});
+function isValidCCCD(str){
+  const v = (str||'').trim().toUpperCase();
+  if(/^\d{12}$/.test(v)) return true; // CCCD: dung 12 so
+  if(/^(?=.*[A-Z])(?=.*\d)[A-Z0-9]{6,12}$/.test(v)) return true; // Ho chieu: co ca chu va so, 6-12 ky tu
+  return false;
+}
+
 // ---------- Toggle "Lao dong pho thong" -> Chung chi khong bat buoc ----------
 const cbLaoDongPhoThong = document.getElementById('laoDongPhoThong');
 const ccReqSpan = document.getElementById('cc-req');
@@ -613,7 +646,12 @@ singleForm.addEventListener('submit', async (e)=>{
   if(!fTheTruoc) missingLabels.push('Thẻ an toàn mặt trước');
   if(!fTheSau) missingLabels.push('Thẻ an toàn mặt sau');
   if(!isPT && !fCC) missingLabels.push('Chứng chỉ');
-  if(!document.getElementById('ngaySinh').value) missingLabels.push('Ngày tháng năm sinh');
+  const ngaySinhVal = document.getElementById('ngaySinh').value.trim();
+  if(!ngaySinhVal) missingLabels.push('Ngày tháng năm sinh');
+  else if(!isValidDDMMYYYY(ngaySinhVal)) missingLabels.push('Ngày tháng năm sinh (đúng định dạng dd/mm/yyyy, ví dụ 20/05/1995)');
+  const cccdVal = document.getElementById('cccd').value.trim();
+  if(!cccdVal) missingLabels.push('Số CCCD/Hộ chiếu');
+  else if(!isValidCCCD(cccdVal)) missingLabels.push('Số CCCD/Hộ chiếu (CCCD phải đủ 12 số, hoặc hộ chiếu 6-12 ký tự gồm cả chữ và số)');
   if(!document.getElementById('consentSingle').checked) missingLabels.push('Đồng ý xử lý dữ liệu cá nhân (tick vào ô xác nhận)');
   if(missingLabels.length){
     showMsg(msgSingle,'err','Vui lòng bổ sung đủ thông tin/ảnh bắt buộc: '+missingLabels.join(', ')+'.');
@@ -622,8 +660,8 @@ singleForm.addEventListener('submit', async (e)=>{
 
   const summaryRows = [
     ['Họ và tên', document.getElementById('hoTen').value.trim()],
-    ['Ngày sinh', document.getElementById('ngaySinh').value],
-    ['Số CCCD', document.getElementById('cccd').value.trim()],
+    ['Ngày sinh', ngaySinhVal],
+    ['Số CCCD/Hộ chiếu', cccdVal],
     ['Đơn vị', donViVal],
     ['Công ty', document.getElementById('congTy').value.trim()],
     ['Chức vụ', document.getElementById('chucVu').value.trim() || '-'],
@@ -654,8 +692,8 @@ async function doSubmitSingle(fAnh, fCccdTruoc, fCccdSau, fTheTruoc, fTheSau, fC
     const payload = {
       type: 'single',
       hoTen: document.getElementById('hoTen').value.trim(),
-      ngaySinh: document.getElementById('ngaySinh').value,
-      cccd: document.getElementById('cccd').value.trim(),
+      ngaySinh: ngaySinhVal,
+      cccd: cccdVal,
       donVi: donViVal,
       congTy: document.getElementById('congTy').value.trim(),
       chucVu: document.getElementById('chucVu').value.trim(),
@@ -816,6 +854,9 @@ function findMissingPhotoRows(){
     const requiredFields = PHOTO_FIELDS.filter(f => !(f === 'cc' && phoThong));
     const missingHere = requiredFields.filter(f=>!rf[f]).map(f=>PHOTO_LABELS[f]);
     if(!r['Ngày sinh']) missingHere.push('Ngày sinh');
+    const cccdRaw = (r['CCCD']||'').toString().trim();
+    if(!cccdRaw) missingHere.push('CCCD/Hộ chiếu');
+    else if(!isValidCCCD(cccdRaw)) missingHere.push('CCCD/Hộ chiếu không hợp lệ (đang là "'+cccdRaw+'")');
     if(missingHere.length){
       problems.push('Dòng '+(i+1)+' ('+(r['Họ và tên']||'?')+'): thiếu '+missingHere.join(', '));
     }
