@@ -129,6 +129,42 @@
     padding:3px 10px;border-radius:20px;margin:10px 0 0;
   }
   footer{text-align:center;margin-top:16px;font-size:11px;color:var(--muted);}
+  .consent-field{margin-top:4px;}
+  .consent-label{display:flex;align-items:flex-start;gap:9px;font-size:13px;font-weight:400;color:var(--ink);cursor:pointer;}
+  .consent-label input[type=checkbox]{width:17px;height:17px;flex:none;margin-top:1px;accent-color:var(--navy);}
+  .consent-label a, .privacy-link{color:var(--blue);text-decoration:underline;}
+  .privacy-box{margin-top:18px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--paper);}
+  .privacy-toggle{
+    width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;
+    padding:11px 14px;background:var(--blue-light);border:none;cursor:pointer;
+    font-size:12.5px;font-weight:700;color:var(--navy);text-align:left;
+  }
+  .privacy-toggle .arrow{transition:transform .15s;}
+  .privacy-toggle.open .arrow{transform:rotate(180deg);}
+  .privacy-detail{display:none;padding:12px 14px;font-size:12.5px;line-height:1.6;color:var(--muted);}
+  .privacy-detail.open{display:block;}
+  .privacy-detail p{margin:0 0 8px;}
+  .privacy-detail p:last-child{margin-bottom:0;}
+  .privacy-detail b{color:var(--ink);}
+  .privacy-detail a{color:var(--blue);}
+  .modal-overlay{
+    display:none;position:fixed;inset:0;background:rgba(10,28,48,.55);
+    z-index:100;align-items:center;justify-content:center;padding:16px;
+  }
+  .modal-overlay.show{display:flex;}
+  .modal-box{
+    background:#fff;border-radius:14px;max-width:420px;width:100%;padding:22px 20px 20px;
+    box-shadow:0 24px 60px -14px rgba(10,28,48,.45);max-height:85vh;overflow-y:auto;
+  }
+  .modal-box h3{margin:0 0 14px;font-size:16px;color:var(--navy);}
+  .modal-body{font-size:13px;color:var(--ink);}
+  .modal-body table{width:100%;border-collapse:collapse;}
+  .modal-body table td{padding:5px 0;border-bottom:1px solid var(--line);vertical-align:top;font-size:12.5px;}
+  .modal-body table td:first-child{color:var(--muted);width:40%;padding-right:8px;}
+  .modal-body table td:last-child{font-weight:600;}
+  .modal-note{margin-top:12px;font-size:12px;color:var(--muted);line-height:1.55;background:var(--blue-light);padding:9px 11px;border-radius:8px;}
+  .modal-actions{display:flex;gap:10px;margin-top:18px;}
+  .modal-actions .btn{flex:1;margin:0;}
 </style>
 </head>
 <body>
@@ -275,6 +311,13 @@
           <p class="hint">Ảnh sẽ được tự động nén để gửi nhanh hơn qua WIFI/5G. Vui lòng chụp rõ nét, đủ 4 góc đối với ảnh CCCD và thẻ an toàn.</p>
         </fieldset>
 
+        <div class="field consent-field">
+          <label class="consent-label">
+            <input type="checkbox" id="consentSingle">
+            <span>Tôi đã đọc <a href="#" class="privacy-link" data-target="privacyBox">Thông báo xử lý dữ liệu cá nhân</a> và đồng ý cho phép thu thập, sử dụng dữ liệu cá nhân của tôi cho mục đích nêu trên.</span>
+          </label>
+        </div>
+
         <button type="submit" class="btn btn-primary" id="btnSubmitSingle">Gửi hồ sơ</button>
         <div class="msg" id="msgSingle"></div>
       </form>
@@ -305,13 +348,47 @@
         <div class="preview-wrap">
           <table class="preview" id="previewTable"></table>
         </div>
+        <div class="field consent-field">
+          <label class="consent-label">
+            <input type="checkbox" id="consentBulk">
+            <span>Tôi xác nhận đã thông báo và được sự đồng ý của từng người trong danh sách về việc thu thập, sử dụng dữ liệu cá nhân theo <a href="#" class="privacy-link" data-target="privacyBox">Thông báo xử lý dữ liệu cá nhân</a>.</span>
+          </label>
+        </div>
         <button type="button" class="btn btn-primary" id="btnSubmitBulk" style="margin-top:14px;">Xác nhận &amp; gửi danh sách</button>
       </div>
       <div class="msg" id="msgBulk"></div>
       <p class="hint" style="margin-top:10px;">Nhập danh sách từ Excel để tạo nhanh nhiều hồ sơ cùng lúc. Ảnh/file (chân dung, CCCD mặt trước/sau, thẻ an toàn mặt trước/sau, chứng chỉ) được đính kèm trực tiếp trong bảng xem trước bên dưới — không cần chỉnh sửa file Excel. Chứng chỉ nhận cả ảnh hoặc PDF, và không bắt buộc với lao động phổ thông (đánh dấu ở cột "Lao động phổ thông" trong file Excel).</p>
     </div>
 
-    <footer>Design by Nguyễn Minh Tuấn</footer>
+    <!-- ================= THONG BAO XU LY DU LIEU CA NHAN ================= -->
+    <div class="privacy-box" id="privacyBox">
+      <button type="button" class="privacy-toggle" id="privacyToggle">
+        <span>🔒 Thông báo xử lý dữ liệu cá nhân</span>
+        <span class="arrow" id="privacyArrow">▾</span>
+      </button>
+      <div class="privacy-detail" id="privacyDetail">
+        <p><b>Mục đích thu thập:</b> Lập hồ sơ và đăng ký khoá đào tạo an toàn lao động cho học viên.</p>
+        <p><b>Dữ liệu thu thập:</b> Họ tên, ngày sinh, số CCCD, số điện thoại, đơn vị/công ty, chức vụ, ảnh chân dung, ảnh CCCD (2 mặt), ảnh thẻ an toàn (2 mặt) và chứng chỉ (nếu có).</p>
+        <p><b>Ai được tiếp cận:</b> Chỉ bộ phận HSE/đào tạo phụ trách của EPS và các đơn vị liên quan phục vụ trực tiếp mục đích trên. Hồ sơ được lưu trữ nội bộ, không công khai.</p>
+        <p><b>Thời gian lưu trữ:</b> Trong thời gian học viên còn công tác/hợp tác tại công trường và theo quy định lưu trữ hồ sơ an toàn lao động của công ty.</p>
+        <p><b>Quyền của bạn:</b> Được biết, đồng ý hoặc rút lại đồng ý, truy cập, yêu cầu chỉnh sửa hoặc xoá dữ liệu cá nhân của mình theo quy định của Luật Bảo vệ dữ liệu cá nhân.</p>
+        <p><b>Yêu cầu truy cập / chỉnh sửa / xoá dữ liệu:</b> Vui lòng liên hệ <a href="mailto:tuannm2@eps.genco3.vn">tuannm2@eps.genco3.vn</a>.</p>
+      </div>
+    </div>
+
+    <footer>Design by Nguyễn Minh Tuấn &nbsp;·&nbsp; <a href="#" class="privacy-link" data-target="privacyBox">Chính sách dữ liệu cá nhân</a></footer>
+  </div>
+</div>
+
+<!-- ================= MODAL XAC NHAN GUI ================= -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <h3 id="confirmModalTitle">Xác nhận gửi hồ sơ</h3>
+    <div class="modal-body" id="confirmModalBody"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="confirmModalCancel">Huỷ, kiểm tra lại</button>
+      <button type="button" class="btn btn-primary" id="confirmModalOk">Xác nhận &amp; gửi</button>
+    </div>
   </div>
 </div>
 
@@ -321,7 +398,7 @@
    Dán URL Web App (Google Apps Script) sau khi triển khai Code.gs
    Xem hướng dẫn trong file HUONG_DAN_TRIEN_KHAI.md
 =========================================================*/
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYh1yAsLSPZgiCnjVgD6YK5H5YLb_voagwqMO_vk1FTDJfgYQmzS-99fnpY20MPC12jg/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyYDSGOozNc1vTw54BgNFXQPstA4cCrr4pjqe-WJdbZpNbYxCAK5WcYcnzu__GxHU76TA/exec";
 
 // ---------- Don vi: dropdown dong, lay tu Google Sheet 'DanhMucDonVi' ----------
 // Danh sach nay tu dong cap nhat: moi khi co ai dang ky voi 1 ten don vi moi
@@ -374,7 +451,50 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
   });
 });
 
-// ---------- Helpers ----------
+// ---------- Thong bao xu ly du lieu ca nhan: toggle + link mo tu form ----------
+const privacyToggleBtn = document.getElementById('privacyToggle');
+const privacyDetailEl = document.getElementById('privacyDetail');
+function setPrivacyOpen(open){
+  privacyDetailEl.classList.toggle('open', open);
+  privacyToggleBtn.classList.toggle('open', open);
+}
+privacyToggleBtn.addEventListener('click', ()=>{
+  setPrivacyOpen(!privacyDetailEl.classList.contains('open'));
+});
+document.querySelectorAll('.privacy-link').forEach(a=>{
+  a.addEventListener('click', (e)=>{
+    e.preventDefault();
+    setPrivacyOpen(true);
+    document.getElementById(a.dataset.target || 'privacyBox').scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+
+// ---------- Modal xac nhan gui (tom tat thong tin + yeu cau xac nhan truoc khi gui that) ----------
+const confirmModal = document.getElementById('confirmModal');
+const confirmModalTitle = document.getElementById('confirmModalTitle');
+const confirmModalBody = document.getElementById('confirmModalBody');
+const confirmModalCancel = document.getElementById('confirmModalCancel');
+const confirmModalOk = document.getElementById('confirmModalOk');
+let confirmModalCallback = null;
+
+function openConfirmModal(title, bodyHtml, onConfirm){
+  confirmModalTitle.textContent = title;
+  confirmModalBody.innerHTML = bodyHtml;
+  confirmModalCallback = onConfirm;
+  confirmModal.classList.add('show');
+}
+function closeConfirmModal(){
+  confirmModal.classList.remove('show');
+  confirmModalCallback = null;
+}
+confirmModalCancel.addEventListener('click', closeConfirmModal);
+confirmModalOk.addEventListener('click', ()=>{
+  const cb = confirmModalCallback;
+  closeConfirmModal();
+  if(cb) cb();
+});
+confirmModal.addEventListener('click', (e)=>{ if(e.target === confirmModal) closeConfirmModal(); });
+
 function showMsg(el, type, html){
   el.className = 'msg show ' + type;
   el.innerHTML = html;
@@ -494,11 +614,29 @@ singleForm.addEventListener('submit', async (e)=>{
   if(!fTheSau) missingLabels.push('Thẻ an toàn mặt sau');
   if(!isPT && !fCC) missingLabels.push('Chứng chỉ');
   if(!document.getElementById('ngaySinh').value) missingLabels.push('Ngày tháng năm sinh');
+  if(!document.getElementById('consentSingle').checked) missingLabels.push('Đồng ý xử lý dữ liệu cá nhân (tick vào ô xác nhận)');
   if(missingLabels.length){
     showMsg(msgSingle,'err','Vui lòng bổ sung đủ thông tin/ảnh bắt buộc: '+missingLabels.join(', ')+'.');
     return;
   }
 
+  const summaryRows = [
+    ['Họ và tên', document.getElementById('hoTen').value.trim()],
+    ['Ngày sinh', document.getElementById('ngaySinh').value],
+    ['Số CCCD', document.getElementById('cccd').value.trim()],
+    ['Đơn vị', donViVal],
+    ['Công ty', document.getElementById('congTy').value.trim()],
+    ['Chức vụ', document.getElementById('chucVu').value.trim() || '-'],
+    ['Điện thoại', document.getElementById('dienThoai').value.trim() || '-'],
+    ['Lao động phổ thông', isPT ? 'Có' : 'Không']
+  ];
+  const bodyHtml = '<table>'+summaryRows.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('')+'</table>'+
+    '<div class="modal-note">Đã đính kèm đủ ảnh/file bắt buộc. Bằng việc bấm "Xác nhận & gửi", bạn xác nhận thông tin trên là chính xác và đồng ý cho phép thu thập, sử dụng dữ liệu cá nhân của mình theo Thông báo xử lý dữ liệu cá nhân đã đọc.</div>';
+
+  openConfirmModal('Xác nhận thông tin & gửi hồ sơ', bodyHtml, ()=> doSubmitSingle(fAnh, fCccdTruoc, fCccdSau, fTheTruoc, fTheSau, fCC, isPT, donViVal));
+});
+
+async function doSubmitSingle(fAnh, fCccdTruoc, fCccdSau, fTheTruoc, fTheSau, fCC, isPT, donViVal){
   btnSubmitSingle.disabled = true;
   btnSubmitSingle.innerHTML = '<span class="spin"></span> Đang nén & gửi hồ sơ...';
   showMsg(msgSingle,'wait','Đang xử lý ảnh và gửi hồ sơ, vui lòng đợi (có thể mất 10-30 giây trên mạng di động)...');
@@ -562,7 +700,7 @@ singleForm.addEventListener('submit', async (e)=>{
     btnSubmitSingle.disabled = false;
     btnSubmitSingle.textContent = 'Gửi hồ sơ';
   }
-});
+}
 
 // ---------- Bulk / Excel ----------
 const REQUIRED_COLS = ['Họ và tên','CCCD','Ngày sinh','Đơn vị','Công ty'];
@@ -691,6 +829,10 @@ document.getElementById('btnSubmitBulk').addEventListener('click', async ()=>{
     showMsg(msgBulk,'err','Vui lòng chọn file Excel danh sách trước.');
     return;
   }
+  if(!document.getElementById('consentBulk').checked){
+    showMsg(msgBulk,'err','Vui lòng tick vào ô đồng ý xử lý dữ liệu cá nhân trước khi gửi.');
+    return;
+  }
   if(APPS_SCRIPT_URL.includes('PASTE_YOUR')){
     showMsg(msgBulk,'err','⚠️ Chưa cấu hình APPS_SCRIPT_URL trong file index.html.');
     return;
@@ -702,6 +844,16 @@ document.getElementById('btnSubmitBulk').addEventListener('click', async ()=>{
     return;
   }
 
+  const bodyHtml =
+    '<table><tr><td>Số người trong danh sách</td><td>'+parsedRows.length+' người</td></tr>'+
+    '<tr><td>Email CC thêm</td><td>'+(document.getElementById('ccEmailBulk').value.trim() || '-')+'</td></tr></table>'+
+    '<div class="modal-note">Đã đính kèm đủ ảnh/file bắt buộc cho tất cả mọi người. Bằng việc bấm "Xác nhận & gửi", bạn xác nhận thông tin trong danh sách là chính xác và đã có sự đồng ý của từng người về việc thu thập, sử dụng dữ liệu cá nhân theo Thông báo xử lý dữ liệu cá nhân đã đọc.</div>';
+
+  openConfirmModal('Xác nhận danh sách & gửi', bodyHtml, doSubmitBulk);
+});
+
+async function doSubmitBulk(){
+  const msgBulk = document.getElementById('msgBulk');
   const btn = document.getElementById('btnSubmitBulk');
   btn.disabled = true;
   btn.innerHTML = '<span class="spin"></span> Đang nén ảnh & gửi danh sách...';
@@ -744,6 +896,7 @@ document.getElementById('btnSubmitBulk').addEventListener('click', async ()=>{
       document.getElementById('previewArea').style.display='none';
       document.getElementById('fileExcel').value='';
       document.getElementById('ccEmailBulk').value='';
+      document.getElementById('consentBulk').checked=false;
       parsedRows = [];
       rowFiles = [];
     }else{
@@ -755,7 +908,7 @@ document.getElementById('btnSubmitBulk').addEventListener('click', async ()=>{
     btn.disabled = false;
     btn.textContent = 'Xác nhận & gửi danh sách';
   }
-});
+}
 </script>
 </body>
 </html>
